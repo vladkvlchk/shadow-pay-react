@@ -13,7 +13,7 @@ export async function createPayment(
     amount,
     token,
     comment,
-    receiver: receiver || generateMockAddress(),
+    receiver,
     status: "pending" as const,
   }
 
@@ -90,16 +90,6 @@ export function subscribeToPaymentUpdates(paymentId: string, callback: (payment:
     .subscribe()
 
   return subscription
-}
-
-// Generate a mock address for demo purposes
-function generateMockAddress(): string {
-  const chars = "0123456789abcdef"
-  let address = "0x"
-  for (let i = 0; i < 40; i++) {
-    address += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return address
 }
 
 // Get all payments (for admin/testing purposes)

@@ -417,7 +417,7 @@ export default function CreatePayment() {
                   <Label htmlFor="receiver">Receiver address</Label>
                   <Input
                     id="receiver"
-                    placeholder="Enter INTMAX address"
+                    placeholder="T... (95 characters INTMAX address)"
                     value={receiver}
                     onChange={(e) => setReceiver(e.target.value)}
                     className="bg-neutral-800 border-neutral-700"

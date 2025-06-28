@@ -205,16 +205,26 @@ export default function PaymentPage() {
         throw new Error(`Invalid receiver address: ${payment.receiver}`);
       }
 
+      // Validate INTMAX address format
+      const isIntMaxAddress = payment.receiver.startsWith('T') || payment.receiver.startsWith('i');
+      if (!isIntMaxAddress) {
+        throw new Error(`Invalid INTMAX address format. Address should start with 'T' (testnet) or 'i' (mainnet): ${payment.receiver}`);
+      }
+
+      if (payment.receiver.length !== 95) {
+        throw new Error(`Invalid INTMAX address length. Expected 95 characters, got ${payment.receiver.length}: ${payment.receiver}`);
+      }
+
       // Create transfer request
       const transferRequest = {
         token,
         amount: payment.amount,
-        receiver: payment.receiver,
-        address: client.address,
+        address: payment.receiver,
         comment: payment.comment || undefined,
       };
 
       console.log(`Transfer request:`, transferRequest);
+      console.log(`Sending ${payment.amount} ${payment.token} FROM ${client.address} TO ${payment.receiver}`);
 
       // Move to broadcasting step
       setCurrentStep("broadcasting");
