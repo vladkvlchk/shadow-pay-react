@@ -1,0 +1,567 @@
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  line-height: 1.6;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.app-header h1 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.app-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.environment-badge {
+  display: inline-block;
+  background: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #e9ecef;
+  font-size: 0.9rem;
+}
+
+.testnet {
+  color: #e67e22;
+  font-weight: 600;
+}
+
+.app-main {
+  display: grid;
+  gap: 2rem;
+}
+
+.error-message {
+  background: #fadbd8;
+  color: #c0392b;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #f1948a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-message button {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.wallet-section {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.wallet-section h2 {
+  margin-top: 0;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 2rem;
+}
+
+.login-section {
+  text-align: center;
+}
+
+.login-section p {
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+}
+
+.connect-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.connect-button:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.connect-button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.wallet-info {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-indicator.connected {
+  background: #27ae60;
+}
+
+.wallet-details {
+  display: grid;
+  gap: 1rem;
+}
+
+.detail-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.detail-item label {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 80px;
+}
+
+.address {
+  font-family: "Monaco", "Menlo", monospace;
+  font-size: 0.9rem;
+  background: #ecf0f1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.wallet-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-button:hover:not(:disabled) {
+  background: #229954;
+}
+
+.action-button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.disconnect-button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.disconnect-button:hover {
+  background: #c0392b;
+}
+
+.tokens-section,
+.balances-section {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.tokens-section h2,
+.balances-section h2 {
+  margin-top: 0;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.tokens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.token-card {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.token-symbol {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.token-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.token-price {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.balances-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.balance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.balance-token {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.balance-token .token-symbol {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.balance-token .token-type {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+.balance-amount {
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.info-section {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.info-section h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature-item h4 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.feature-item ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-item li {
+  padding: 0.25rem 0;
+  color: #7f8c8d;
+}
+
+.feature-item li::before {
+  content: "✓";
+  color: #27ae60;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.transaction-history {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.history-sections {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.history-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.transaction-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.tx-type {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tx-type.deposit {
+  background: #d4edda;
+  color: #155724;
+}
+
+.tx-type.transfer {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.tx-details {
+  color: #7f8c8d;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-nav {
+  background: #2c3e50;
+  padding: 1rem 2rem;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-link:hover {
+  background-color: #34495e;
+}
+
+.layout-content {
+  flex-grow: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.home-page {
+  background: #ffffff;
+  padding: 3rem;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  text-align: center;
+}
+
+.home-page h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.home-page p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.home-page .info-section {
+  margin-top: 2.5rem;
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.home-page .info-section h3 {
+  color: #34495e;
+  margin-bottom: 1rem;
+}
+
+.home-page .info-section p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.wallet-dashboard-page {
+  /* This class will wrap the content that was previously directly in App.tsx */
+  /* It helps maintain consistent padding and layout for the dashboard content */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0; /* Remove padding here as it's handled by .layout-content */
+}
+
+.troubleshooting-section {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.troubleshooting-section h2 {
+  margin-top: 0;
+  color: #856404;
+  margin-bottom: 1.5rem;
+}
+
+.setup-steps {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.step {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.step h4 {
+  margin-top: 0;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.step p {
+  margin: 0;
+  color: #7f8c8d;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 1rem;
+  }
+
+  .wallet-actions {
+    flex-direction: column;
+  }
+
+  .detail-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .tokens-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .main-nav {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .nav-link {
+    text-align: center;
+  }
+
+  .layout-content {
+    padding: 1rem;
+  }
+
+  .home-page {
+    padding: 2rem 1.5rem;
+  }
+
+  .troubleshooting-section {
+    padding: 1.5rem;
+  }
+
+  .step {
+    padding: 1rem;
+  }
+}
