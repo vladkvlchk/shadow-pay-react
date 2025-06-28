@@ -109,11 +109,16 @@ export default function CreatePayment() {
       return
     }
 
+    if (!receiver.trim()) {
+      setError("Please enter a receiver address")
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     try {
-      const newPayment = await createPayment(Number.parseFloat(amount), token, comment, receiver)
+      const newPayment = await createPayment(Number.parseFloat(amount), token, comment, receiver.trim())
       setPayment(newPayment)
       setPaymentStatus("pending")
     } catch (err) {
@@ -412,7 +417,7 @@ export default function CreatePayment() {
                   <Label htmlFor="receiver">Receiver address</Label>
                   <Input
                     id="receiver"
-                    placeholder="0xabcdaf012345678..."
+                    placeholder="Enter INTMAX address"
                     value={receiver}
                     onChange={(e) => setReceiver(e.target.value)}
                     className="bg-neutral-800 border-neutral-700"

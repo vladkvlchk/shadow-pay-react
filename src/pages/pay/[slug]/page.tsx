@@ -27,13 +27,60 @@ import { getPaymentById, updatePaymentStatus } from "@/lib/payments-db";
 import { type Payment } from "@/lib/supabase";
 import { useParams } from "react-router-dom";
 
+// Progress indicator component
+const PaymentProgress = ({ currentStep }: { currentStep: 'signing' | 'broadcasting' | 'completed' | null }) => {
+  if (!currentStep) return null;
+
+  const steps = [
+    { id: 'signing', label: 'Signing Transaction', icon: Loader2 },
+    { id: 'broadcasting', label: 'Broadcasting to Network', icon: Loader2 },
+    { id: 'completed', label: 'Payment Completed', icon: CheckCircle2 }
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="text-sm font-medium text-neutral-300 mb-3">Payment Progress</div>
+      <div className="space-y-3">
+        {steps.map((step, index) => {
+          const Icon = step.icon;
+          const isActive = currentStep === step.id;
+          const isCompleted = currentStep === 'completed' && index < 2;
+          const isPending = !isActive && !isCompleted;
+
+          return (
+            <div key={step.id} className="flex items-center space-x-3">
+              <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                isCompleted ? 'bg-green-500' : isActive ? 'bg-blue-500' : 'bg-neutral-600'
+              }`}>
+                {isActive ? (
+                  <Icon className="w-3 h-3 text-white animate-spin" />
+                ) : isCompleted ? (
+                  <CheckCircle2 className="w-3 h-3 text-white" />
+                ) : (
+                  <div className="w-2 h-2 bg-neutral-400 rounded-full" />
+                )}
+              </div>
+              <span className={`text-sm ${
+                isActive ? 'text-blue-400 font-medium' : 
+                isCompleted ? 'text-green-400' : 'text-neutral-500'
+              }`}>
+                {step.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 export default function PaymentPage() {
   const { slug } = useParams();
   const { 
     client, 
     balances, 
     isProcessingPayment, 
-    error, 
+    error: intmaxError, 
     clearError,
     connect 
   } = useIntMaxWallet();
@@ -41,10 +88,11 @@ export default function PaymentPage() {
   const [payment, setPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(true);
   const [pageError, setPageError] = useState<string | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<
-    "idle" | "processing" | "success" | "error"
-  >("idle");
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
+  const [currentStep, setCurrentStep] = useState<'signing' | 'broadcasting' | 'completed' | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [transferFee, setTransferFee] = useState<any>(null);
 
   useEffect(() => {
     const fetchPayment = async () => {
@@ -65,9 +113,19 @@ export default function PaymentPage() {
           setPaymentStatus("success");
           setTxHash(paymentData.tx_hash || null);
         }
+
+        // Fetch transfer fee if client is connected
+        if (client?.isLoggedIn) {
+          try {
+            const fee = await client.getTransferFee();
+            setTransferFee(fee);
+          } catch (err) {
+            console.error("Failed to fetch transfer fee:", err);
+          }
+        }
       } catch (err) {
         console.error("Error fetching payment:", err);
-        setPageError("Failed to load payment details.");
+        setPageError("Failed to load payment");
       } finally {
         setLoading(false);
       }
@@ -78,12 +136,29 @@ export default function PaymentPage() {
     }
   }, [slug]);
 
+  // Fetch fees when client connects
+  useEffect(() => {
+    if (client?.isLoggedIn && payment) {
+      const fetchFees = async () => {
+        try {
+          const fee = await client.getTransferFee();
+          setTransferFee(fee);
+        } catch (err) {
+          console.error("Failed to fetch transfer fee:", err);
+        }
+      };
+      fetchFees();
+    }
+  }, [client?.isLoggedIn, payment]);
+
   const handlePayment = async () => {
     if (!client?.isLoggedIn || !payment) return;
 
     try {
       setPaymentStatus("processing");
+      setCurrentStep("signing");
       clearError();
+      setError(null);
 
       // Get token information
       const tokens = await client.getTokensList();
@@ -100,8 +175,30 @@ export default function PaymentPage() {
       console.log(`User balance for ${payment.token}: ${userBalance?.amount.toString() || '0'}`);
       console.log(`Token info:`, token);
 
+      // Get transfer fee to check if user has enough ETH for fees
+      const transferFee = await client.getTransferFee();
+      console.log(`Transfer fee:`, transferFee);
+      setTransferFee(transferFee);
+      
+      // Check if user has enough ETH for fees
+      const ethBalance = currentBalances.find(b => b.token.tokenIndex === 0); // ETH has tokenIndex 0
+      if (ethBalance && transferFee?.fee) {
+        const requiredFee = BigInt(transferFee.fee.amount);
+        const userEthBalance = ethBalance.amount;
+        
+        console.log(`User ETH balance: ${userEthBalance.toString()}`);
+        console.log(`Required fee: ${requiredFee.toString()}`);
+        
+        if (userEthBalance < requiredFee) {
+          throw new Error(`Insufficient ETH for fees. You need at least ${Number(requiredFee) / 1e18} ETH for transaction fees.`);
+        }
+      }
+
       console.log(`Payment amount: ${payment.amount} ${payment.token}`);
       console.log(`Payment receiver: ${payment.receiver}`);
+      console.log(`Client address: ${client.address}`);
+      console.log(`Receiver type: ${typeof payment.receiver}`);
+      console.log(`Receiver length: ${payment.receiver?.length}`);
 
       // Check if receiver is a valid INTMAX address
       if (!payment.receiver || typeof payment.receiver !== 'string' || payment.receiver.length < 10) {
@@ -116,6 +213,11 @@ export default function PaymentPage() {
         address: client.address,
         comment: payment.comment || undefined,
       };
+
+      console.log(`Transfer request:`, transferRequest);
+
+      // Move to broadcasting step
+      setCurrentStep("broadcasting");
 
       // Broadcast the transaction
       const transactionResponse = await client.broadcastTransaction(
@@ -142,6 +244,7 @@ export default function PaymentPage() {
           setPayment(updatedPayment);
           setTxHash(txHash);
           setPaymentStatus("success");
+          setCurrentStep("completed");
         }
       } else {
         throw new Error("Transaction failed - no txTreeRoot received");
@@ -149,6 +252,7 @@ export default function PaymentPage() {
     } catch (err: any) {
       console.error("Payment error:", err);
       setPaymentStatus("error");
+      setCurrentStep(null);
       
       // Handle specific error types
       let errorMessage = "Payment failed. Please try again.";
@@ -161,6 +265,7 @@ export default function PaymentPage() {
         errorMessage = err.message;
       }
       
+      setError(errorMessage);
       console.error("Payment failed:", errorMessage);
     }
   };
@@ -273,23 +378,93 @@ export default function PaymentPage() {
                     <span className="text-neutral-400">Token:</span>
                     <span className="text-sm font-medium">{payment.token}</span>
                   </div>
+
+                  {transferFee && (
+                    <div className="border-t border-neutral-700 pt-2 mt-2">
+                      <div className="text-xs text-neutral-500 mb-2">Transaction Fees:</div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-xs text-neutral-400">Network Fee:</span>
+                        <span className="text-xs text-yellow-400">
+                          {transferFee.fee ? `${Number(transferFee.fee.amount) / 1e18} ETH` : 'Calculating...'}
+                        </span>
+                      </div>
+                      {transferFee.collateral_fee && (
+                        <div className="flex justify-between mb-1">
+                          <span className="text-xs text-neutral-400">Collateral Fee:</span>
+                          <span className="text-xs text-orange-400">
+                            {Number(transferFee.collateral_fee.amount) / 1e18} ETH
+                          </span>
+                        </div>
+                      )}
+                      <div className="text-xs text-neutral-500 mt-1">
+                        * Collateral fee is refunded if transaction completes successfully
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {paymentStatus === "success" || payment.status === "paid" ? (
-                  <Alert className="bg-green-900/20 border-green-900 text-green-400">
+                  <Alert className="bg-green-900/20 border-green-900 text-green-400 animate-pulse">
                     <CheckCircle2 className="h-4 w-4" />
                     <AlertDescription className="text-green-400">
-                      Payment completed successfully!
+                      <div className="space-y-2">
+                        <div className="font-semibold flex items-center gap-2">
+                          <span className="animate-bounce">🎉</span>
+                          Payment completed successfully!
+                          <span className="animate-bounce">🎉</span>
+                        </div>
+                        {txHash && (
+                          <div className="text-xs text-green-300">
+                            Transaction: {txHash.substring(0, 10)}...{txHash.substring(txHash.length - 8)}
+                          </div>
+                        )}
+                        <div className="text-xs text-green-300">
+                          Your payment has been confirmed on the INTMAX2 network.
+                        </div>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                ) : paymentStatus === "processing" ? (
+                  <Alert className="bg-blue-900/20 border-blue-900 text-blue-400">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <AlertDescription className="text-blue-400">
+                      <div className="space-y-2">
+                        <div className="font-semibold">Processing your payment...</div>
+                        <div className="text-xs text-blue-300">
+                          Please wait while we confirm your transaction on the INTMAX2 network.
+                        </div>
+                      </div>
                     </AlertDescription>
                   </Alert>
                 ) : paymentStatus === "error" || error ? (
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      {error || "Payment failed. Please try again."}
+                      <div className="space-y-2">
+                        <div>{error || "Payment failed. Please try again."}</div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-2 border-red-700 text-red-400 hover:bg-red-700/20"
+                          onClick={() => {
+                            setPaymentStatus("idle");
+                            setCurrentStep(null);
+                            setError(null);
+                          }}
+                        >
+                          Try Again
+                        </Button>
+                      </div>
                     </AlertDescription>
                   </Alert>
                 ) : null}
+
+                {/* Payment Progress Indicator */}
+                {currentStep && (
+                  <div className="bg-neutral-800 p-4 rounded-lg">
+                    <PaymentProgress currentStep={currentStep} />
+                  </div>
+                )}
 
                 {(txHash || payment.tx_hash) && (
                   <div className="text-center">
@@ -329,13 +504,25 @@ export default function PaymentPage() {
                     onClick={handlePayment}
                     disabled={
                       isProcessingPayment ||
-                      !client
+                      !client ||
+                      paymentStatus === "processing" ||
+                      currentStep !== null
                     }
                   >
-                    {isProcessingPayment ? (
+                    {currentStep === "signing" ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing Payment...
+                        Signing Transaction...
+                      </>
+                    ) : currentStep === "broadcasting" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Broadcasting Transaction...
+                      </>
+                    ) : isProcessingPayment ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
                       </>
                     ) : !client ? (
                       "Connect Wallet"

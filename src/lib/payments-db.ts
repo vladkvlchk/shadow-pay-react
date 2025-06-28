@@ -17,6 +17,8 @@ export async function createPayment(
     status: "pending" as const,
   }
 
+  console.log("Creating payment with data:", paymentData);
+
   const { data, error } = await supabase.from("payments").insert([paymentData]).select().single()
 
   if (error) {
