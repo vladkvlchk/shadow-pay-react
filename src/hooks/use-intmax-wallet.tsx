@@ -70,7 +70,7 @@ export function IntMaxWalletProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     const initClient = async () => {
       try {
-        console.log("Initializing INTMAX2 client...")
+        console.log("Initializing INTMAX client...")
         console.log("Browser supports WebAssembly:", typeof WebAssembly !== 'undefined')
         
         const initializedClient = await IntmaxClient.init({
@@ -210,7 +210,7 @@ export function IntMaxWalletProvider({ children }: { children: React.ReactNode }
       setIsProcessingPayment(true)
       setError(null)
 
-      const message = "Hello from INTMAX2!"
+      const message = "Hello from INTMAX!"
       const signature = await client.signMessage(message)
 
       // Verify the signature

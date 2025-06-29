@@ -281,7 +281,7 @@ export default function PaymentPage() {
   };
 
   const getExplorerUrl = (txHash: string): string => {
-    // Use INTMAX2 explorer format
+    // Use INTMAX explorer format
     return `https://testnet-explorer.intmax.io/tx/${txHash}`;
   };
 
@@ -429,7 +429,7 @@ export default function PaymentPage() {
                           </div>
                         )}
                         <div className="text-xs text-green-300">
-                          Your payment has been confirmed on the INTMAX2 network.
+                          Your payment has been confirmed on the INTMAX network.
                         </div>
                       </div>
                     </AlertDescription>
@@ -441,7 +441,7 @@ export default function PaymentPage() {
                       <div className="space-y-2">
                         <div className="font-semibold">Processing your payment...</div>
                         <div className="text-xs text-blue-300">
-                          Please wait while we confirm your transaction on the INTMAX2 network.
+                          Please wait while we confirm your transaction on the INTMAX network.
                         </div>
                       </div>
                     </AlertDescription>

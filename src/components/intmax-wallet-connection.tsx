@@ -45,7 +45,7 @@ export function IntMaxWalletConnection() {
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
             <Wallet className="h-4 w-4 text-purple-400" />
-            INTMAX2 Wallet Connected
+            INTMAX Wallet Connected
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -128,7 +128,7 @@ export function IntMaxWalletConnection() {
       <CardHeader className="pb-3">
         <CardTitle className="text-sm flex items-center gap-2 text-white">
           <Wallet className="h-4 w-4 text-neutral-400" />
-          Connect INTMAX2 Wallet
+          Connect INTMAX Wallet
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -140,7 +140,7 @@ export function IntMaxWalletConnection() {
         )}
 
         <div className="text-sm text-gray-400">
-          Connect your Web3 wallet to use INTMAX2 features
+          Connect your Web3 wallet to use INTMAX features
         </div>
 
         <Button
@@ -166,7 +166,7 @@ export function IntMaxWalletConnection() {
 
         {!client && (
           <div className="text-xs text-gray-500 text-center">
-            Initializing INTMAX2 client...
+            Initializing INTMAX client...
           </div>
         )}
       </CardContent>
