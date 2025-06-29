@@ -476,7 +476,7 @@ export default function PaymentPage() {
                   </div>
                 )}
 
-                {(txHash || payment.tx_hash) && (
+                {/* {(txHash || payment.tx_hash) && (
                   <div className="text-center">
                     <a
                       href={getExplorerUrl(txHash || payment.tx_hash!)}
@@ -487,7 +487,7 @@ export default function PaymentPage() {
                       View transaction <ExternalLink className="h-3 w-4" />
                     </a>
                   </div>
-                )}
+                )} */}
               </CardContent>
               <CardFooter className="flex flex-col gap-4">
                 {payment.status === "paid" ? (

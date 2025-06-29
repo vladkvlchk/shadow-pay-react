@@ -124,10 +124,10 @@ export function IntMaxWalletConnection() {
   }
 
   return (
-    <Card className="bg-gray-800 border-gray-700">
+    <Card className="bg-neutral-800 border-neutral-700">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm flex items-center gap-2">
-          <Wallet className="h-4 w-4 text-gray-400" />
+        <CardTitle className="text-sm flex items-center gap-2 text-white">
+          <Wallet className="h-4 w-4 text-neutral-400" />
           Connect INTMAX2 Wallet
         </CardTitle>
       </CardHeader>
